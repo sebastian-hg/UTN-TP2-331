@@ -1,0 +1,44 @@
+Lista de pantalas (front y logica)C = cliente|| A = administrador
+	Hechas:
+	proceso:
+	por hacer:
+		C-Bienvenida
+			FRONT
+				Logo de la aplicación
+				Nombre de la aplicación
+				Nombre de los alumnos
+				Barra de navegación (Hacia C-poductos GRANDE. Hacia P- login). 
+				Input nombre de cliente
+			BACK
+
+		C-Productos
+		C-Carrito
+		C-ticket
+		P-login
+		P-Dashboard
+		P-Alta producto
+		P-Modificar producto
+
+
+
+
+Clases y herencias
+
+	Usuario
+		cliente
+		administrador
+
+	Producto
+		*hijo de producto acorde*
+
+	necesarias para paginas
+
+
+
+
+
+		
+
+
+	
+	
