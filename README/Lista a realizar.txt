@@ -10,14 +10,14 @@ Lista de pantalas (front y logica)C = cliente|| A = administrador
 				Barra de navegación (Hacia C-poductos GRANDE. Hacia P- login). 
 				Input nombre de cliente
 			BACK
-
+				
 		C-Productos
 		C-Carrito
 		C-ticket
 		P-login
 		P-Dashboard
-		P-Alta producto
-		P-Modificar producto
+			P-Alta producto
+			P-Modificar producto
 
 
 
@@ -29,12 +29,45 @@ Clases y herencias
 		administrador
 
 	Producto
-		*hijo de producto acorde*
+		Atributos()
+			-talle(array[int])
+			-nombre(str)
+			-ID(int+str?)
+			-url(str)
+			-imagen(image)
+			-precio(float)
+			-stock(int)
 
+
+		Metodos
+			Generales
+				toJsonString()JSON
+				createHtmlElement()div
+					nombre de producto
+					precio
+					imagen
+					botoncomprar
+					*/siendo ropa el tema de los talles seria un pop up
+					cuando se aprieta el boton de comprar o una pantalla mas/*
+
+			virtuales
+				createFromJsonString(json)Clase
+			
+
+	*hijo de producto acorde*
+		ropa
+			Atributos
+				color
+			Metodos
+				overwrite
+					createFromJsonString(json)Clase
+		zapatillas
 	necesarias para paginas
 
 
-
+Persistencia de datos
+	Base de datos 
+	Local Storage
 
 
 		
