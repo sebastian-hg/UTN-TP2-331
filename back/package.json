@@ -16,5 +16,14 @@
   "bugs": {
     "url": "https://github.com/sebastian-hg/front-tp2/issues"
   },
-  "homepage": "https://github.com/sebastian-hg/front-tp2#readme"
+  "homepage": "https://github.com/sebastian-hg/front-tp2#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7"
+  }
 }
