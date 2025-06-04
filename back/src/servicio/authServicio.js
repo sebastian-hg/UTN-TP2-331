@@ -2,24 +2,24 @@ const { Usuario } = require('../modelo');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = '';
+const SECRET_KEY = 'mi_clave_secreta_para_jwt_12345';
 
 // Registrar
-const registrarUsuario = async ({ nombre_usuario, password }) => {
-  const usuarioExistente = await Usuario.findOne({ where: { nombre_usuario } });
+const registrarUsuario = async ({ email, password }) => {
+  const usuarioExistente = await Usuario.findOne({ where: { email } });
   if (usuarioExistente) {
     throw new Error('El usuario ya existe');
   }
 
   const hash = await bcrypt.hash(password, 10);
-  const nuevoUsuario = await Usuario.create({ nombre_usuario, password: hash });
+  const nuevoUsuario = await Usuario.create({ email, password: hash });
 
-  return { id: nuevoUsuario.id, nombre_usuario };
+  return { id: nuevoUsuario.id, email };
 };
 
 // Login
-const loginUsuario = async ({ nombre_usuario, password }) => {
-  const usuario = await Usuario.findOne({ where: { nombre_usuario } });
+const loginUsuario = async ({ email, password }) => {
+  const usuario = await Usuario.findOne({ where: { email } });
   if (!usuario) {
     throw new Error('Credenciales incorrectas');
   }
@@ -29,9 +29,12 @@ const loginUsuario = async ({ nombre_usuario, password }) => {
     throw new Error('Credenciales incorrectas');
   }
 
-  const token = jwt.sign({ id: usuario.id, nombre_usuario: usuario.nombre_usuario }, SECRET_KEY, {
-    expiresIn: '1h',
-  });
+  // Firmar JWT con id y email
+  const token = jwt.sign(
+    { id: usuario.id, email: usuario.email },
+    SECRET_KEY,
+    { expiresIn: '1h' }
+  );
 
   return { token };
 };

@@ -55,15 +55,15 @@ const cargarDatosIniciales = async () => {
     // 4. Crear usuarios con contraseña encriptada
     const saltRounds = 10;
     const usuarios = [
-      { nombre_usuario: "SebastianHernandez", password: "sebas123" },
-      { nombre_usuario: "ThiagoFernandez", password: "thiago123" },
-      { nombre_usuario: "test", password: "test1234" },
+      { email: "S@gmail.com", password: "123" },
+      { email: "ThiagoFernandez", password: "thiago123" },
+      { email: "test", password: "test1234" },
     ];
 
     for (const user of usuarios) {
       const hash = await bcrypt.hash(user.password, saltRounds);
       await Usuario.create({
-        nombre_usuario: user.nombre_usuario,
+        email: user.email,
         password: hash,
       });
     }

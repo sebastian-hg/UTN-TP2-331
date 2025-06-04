@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controlador/authController');
 
-router.post('/register', authController.registrar); // TODO: probar con Postman
-router.post('/login', authController.login);
+router.get('/login', authController.renderLogin);      
+router.post('/login', authController.loginVista);      
+router.post('/register', authController.registrar)
+
 
 module.exports = router;
