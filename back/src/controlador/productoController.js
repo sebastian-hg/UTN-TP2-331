@@ -1,12 +1,12 @@
 const productoServicio = require('../servicio/productoServicio');
+const { Producto } = require('../modelo');
 
-// Obtener todos los productos
-const obtenerTodos = async (req, res) => {
+const obtenerTodos = async () => {
   try {
-    const productos = await productoServicio.obtenerTodos();
-    res.json(productos);
+    return await Producto.findAll();
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener productos' });
+    console.error('Error en obtenerTodos:', error);
+    throw error;
   }
 };
 
