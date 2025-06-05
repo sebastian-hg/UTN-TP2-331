@@ -1,7 +1,16 @@
 const { Producto, Talla } = require('../modelo');
 
 const obtenerTodos = async () => {
-  return await Producto.findAll();
+  return await Producto.findAll({
+  
+    include: [
+      {
+        model: Talla,
+        as: 'tallas', // este alias debe coincidir con el definido en la asociación
+        through: { attributes: [] } // omite la tabla intermedia
+      }
+    ]
+  });
 };
 
 const obtenerPorId = async (id) => {
