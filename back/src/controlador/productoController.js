@@ -56,7 +56,7 @@ const eliminarProducto = async (req, res) => {
 // Buscar por categoría
 const buscarPorCategoria = async (req, res) => {
   try {
-    const productos = await productoServicio.buscarPorCategoria(req.params.categoria.toLowerCase());
+    const productos = await productoServicio.obtenerProductosPorCategoriaConTallas(req.params.categoria.toLowerCase());
     console.log('Productos encontrados:', productos);
     res.json(productos);
   } catch (error) {

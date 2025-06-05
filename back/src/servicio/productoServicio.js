@@ -31,7 +31,13 @@ const eliminarProducto = async (id) => {
 const obtenerProductosPorCategoriaConTallas = async (categoria) => {
   return await Producto.findAll({
     where: { categoria },
-    include: [{ model: Talla, through: { attributes: [] } }]
+    include: [
+      {
+        model: Talla,
+        as: 'tallas', // este alias debe coincidir con el definido en la asociación
+        through: { attributes: [] } // omite la tabla intermedia
+      }
+    ]
   });
 };
 
