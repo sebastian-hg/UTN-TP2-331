@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const authRuta = require("./src/rutas/auth");
 const productoRoutes = require("./src/rutas/producto");
 const dashboardRoutes = require("./src/rutas/dashboard");
+const uploadRoutes = require("./src/rutas/uploadRuta");
 const app = express();
 
 app.use(cors()); // Para permitir todas las solicitudes cross-origin
@@ -23,10 +24,16 @@ app.use(express.json());
 app.use(cookieParser());
 
 
-// Usar rutas
+// Servir archivos estáticos para poder acceder a las imágenes
+app.use('/uploads', express.static('uploads'));
+
+// rutas
+app.use('/upload', uploadRoutes);
+
 app.use("/productos", productoRoutes);
 app.use("/auth", authRuta);
 app.use("/", dashboardRoutes); // Rutas protegidas y dashboard
+
 
 // Ruta raíz redirige a login . momentaneamente
 app.get("/", (req, res) => {
