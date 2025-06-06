@@ -11,6 +11,10 @@ const obtenerTodos = async (req, res) => {
   }
 };
 
+const obtenerTodosDashboard = async () => {
+  return await Producto.findAll(); // esta sí devuelve productos
+};
+
 // Obtener producto por ID
 const obtenerPorId = async (req, res) => {
   try {
@@ -72,4 +76,5 @@ module.exports = {
   modificarProducto,
   eliminarProducto,
   buscarPorCategoria,
+  obtenerTodosDashboard
 };

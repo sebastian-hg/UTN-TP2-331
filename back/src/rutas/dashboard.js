@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { protegerRutaWeb } = require('../controlador/authController');
-const { obtenerTodos } = require('../controlador/productoController');
+const { obtenerTodosDashboard } = require('../controlador/productoController');
 
 router.get('/dashboard', protegerRutaWeb, async (req, res) => {
   try {
-    const productos = await obtenerTodos();
+    const productos = await obtenerTodosDashboard();
     res.render('dashboard', { usuario: req.usuario, productos });
   } catch (error) {
     console.error('Error al cargar dashboard:', error);
