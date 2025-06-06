@@ -22,6 +22,12 @@ const login = async (req, res) => {
   }
 };
 
+//deslogeo
+const logout = (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/auth/login');
+};
+
 // Mostrar formulario login (EJS)
 const renderLogin = (req, res) => {
   res.render('login', { error: null });
@@ -83,5 +89,6 @@ module.exports = {
   loginVista,
   protegerRutaAPI,
   protegerRutaWeb,
+  logout
 };
 
