@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <title>Dashboard - Productos</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background-color: #f0f2f5;
@@ -15,7 +12,6 @@
       display: flex;
       height: 100vh;
     }
-
     .sidebar {
       width: 220px;
       background-color: #2c3e50;
@@ -25,14 +21,11 @@
       flex-direction: column;
       gap: 1.5rem;
     }
-
     .sidebar h2 {
       font-size: 1.2rem;
       margin-bottom: 1rem;
     }
-
-    .sidebar a,
-    .sidebar form button {
+    .sidebar a, .sidebar form button {
       color: white;
       text-decoration: none;
       background: none;
@@ -43,29 +36,21 @@
       text-align: left;
       width: 100%;
     }
-
-    .sidebar a:hover,
-    .sidebar form button:hover {
+    .sidebar a:hover, .sidebar form button:hover {
       background-color: #34495e;
     }
-
     .contenido {
       flex: 1;
       padding: 2rem;
       overflow-y: auto;
     }
-
-    .contenido h1 {
-      color: #2c3e50;
-    }
-
+    .contenido h1 { color: #2c3e50; }
     .productos {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-top: 2rem;
     }
-
     .card {
       background-color: white;
       padding: 1rem;
@@ -76,31 +61,23 @@
       gap: 0.5rem;
       position: relative;
     }
-
     .card img {
       width: 100%;
       height: 150px;
       object-fit: cover;
       border-radius: 5px;
     }
-
-    .card h3 {
-      margin: 0;
-      color: #333;
-    }
-
+    .card h3 { margin: 0; color: #333; }
     .card .precio {
       font-weight: bold;
       color: #27ae60;
     }
-
     .acciones {
       margin-top: auto;
       display: flex;
       gap: 0.5rem;
       justify-content: space-between;
     }
-
     .acciones a,
     .acciones button {
       font-size: 0.9rem;
@@ -110,26 +87,21 @@
       cursor: pointer;
       text-decoration: none;
     }
-
     .acciones a {
       background-color: #3498db;
       color: white;
     }
-
     .acciones button {
       background-color: #e74c3c;
       color: white;
     }
-
     .acciones button.activar {
       background-color: #27ae60;
     }
-
     .card.inactivo {
       opacity: 0.5;
       filter: grayscale(1);
     }
-
     .inactivo-label {
       position: absolute;
       top: 10px;
@@ -140,7 +112,6 @@
       font-size: 0.8rem;
       border-radius: 5px;
     }
-
     #modalEliminar {
       display: none;
       position: fixed;
@@ -151,7 +122,6 @@
       align-items: center;
       z-index: 999;
     }
-
     #modalEliminar .modal-content {
       background-color: white;
       padding: 2rem;
@@ -159,7 +129,6 @@
       text-align: center;
       width: 300px;
     }
-
     #modalEliminar button {
       margin: 0.5rem;
       padding: 0.5rem 1rem;
@@ -167,12 +136,10 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
     #modalEliminar .confirmar {
       background-color: #e74c3c;
       color: white;
     }
-
     #modalEliminar .cancelar {
       background-color: #7f8c8d;
       color: white;
@@ -210,9 +177,9 @@
             <div class="acciones">
               <a href="/productos/editar/<%= producto.id %>">Editar</a>
               <% if (producto.activo) { %>
-                <button onclick="mostrarModal('<%= producto.id %>')">Eliminar</button>
+                <button onclick="mostrarModal('<%= producto.id %>', true)">Eliminar</button>
               <% } else { %>
-                <button class="activar" onclick="activarProducto('<%= producto.id %>')">Activar</button>
+                <button class="activar" onclick="mostrarModal('<%= producto.id %>', false)">Activar</button>
               <% } %>
             </div>
           </div>
@@ -223,6 +190,7 @@
     </section>
   </main>
 
+  <!-- Modal compartido para eliminar/activar -->
   <div id="modalEliminar">
     <div class="modal-content">
       <p>¿Estás seguro que deseas eliminar este producto?</p>
@@ -232,85 +200,74 @@
   </div>
 
   <script>
-    let idAEliminar = null;
+    let idProductoModal = null;
+    let esEliminacion = true;
 
-    function mostrarModal(id) {
-      idAEliminar = id;
+    function mostrarModal(id, eliminar = true) {
+      idProductoModal = id;
+      esEliminacion = eliminar;
+
+      const texto = eliminar
+        ? "¿Estás seguro que deseas eliminar este producto?"
+        : "¿Deseas activar este producto nuevamente?";
+
+      const boton = document.querySelector("#modalEliminar .confirmar");
+      boton.textContent = eliminar ? "Sí, eliminar" : "Sí, activar";
+
+      document.querySelector("#modalEliminar p").textContent = texto;
       document.getElementById("modalEliminar").style.display = "flex";
     }
 
     function cerrarModal() {
-      idAEliminar = null;
+      idProductoModal = null;
       document.getElementById("modalEliminar").style.display = "none";
     }
 
     async function confirmarEliminar() {
-      if (!idAEliminar) return;
+      if (!idProductoModal) return;
 
       try {
-        const res = await fetch(`/productos/estado/${idAEliminar}`, {
+        const res = await fetch(`/productos/estado/${idProductoModal}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ activo: false })
+          body: JSON.stringify({ activo: !esEliminacion })
         });
 
         const data = await res.json();
 
         if (res.ok) {
-          const card = document.getElementById(`producto-${idAEliminar}`);
-          card.classList.add('inactivo');
-          card.querySelector('.acciones').innerHTML = `
-            <a href="/productos/editar/${idAEliminar}">Editar</a>
-            <button class="activar" onclick="activarProducto('${idAEliminar}')">Activar</button>
-          `;
+          const card = document.getElementById(`producto-${idProductoModal}`);
+          const accionesDiv = card.querySelector('.acciones');
 
-          const label = document.createElement('div');
-          label.className = 'inactivo-label';
-          label.textContent = 'Producto inactivo';
-          card.appendChild(label);
+          if (esEliminacion) {
+            card.classList.add('inactivo');
+            accionesDiv.innerHTML = `
+              <a href="/productos/editar/${idProductoModal}">Editar</a>
+              <button class="activar" onclick="mostrarModal('${idProductoModal}', false)">Activar</button>
+            `;
+            const label = document.createElement('div');
+            label.className = 'inactivo-label';
+            label.textContent = 'Producto inactivo';
+            card.appendChild(label);
+          } else {
+            card.classList.remove('inactivo');
+            accionesDiv.innerHTML = `
+              <a href="/productos/editar/${idProductoModal}">Editar</a>
+              <button onclick="mostrarModal('${idProductoModal}', true)">Eliminar</button>
+            `;
+            const label = card.querySelector('.inactivo-label');
+            if (label) label.remove();
+          }
         } else {
           alert(data?.error || "No se pudo actualizar el estado del producto.");
         }
       } catch (error) {
         console.error(error);
-        alert("Error de red al intentar eliminar.");
+        alert("Error de red al intentar actualizar.");
       } finally {
         cerrarModal();
-      }
-    }
-
-    async function activarProducto(id) {
-      try {
-        const res = await fetch(`/productos/estado/${id}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ activo: true })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          const card = document.getElementById(`producto-${id}`);
-          card.classList.remove('inactivo');
-
-          const accionesDiv = card.querySelector('.acciones');
-          accionesDiv.innerHTML = `
-            <a href="/productos/editar/${id}">Editar</a>
-            <button onclick="mostrarModal('${id}')">Eliminar</button>
-          `;
-
-          const label = card.querySelector('.inactivo-label');
-          if (label) label.remove();
-        } else {
-          alert(data?.error || "No se pudo activar el producto.");
-        }
-      } catch (error) {
-        console.error(error);
-        alert("Error de red al intentar activar.");
       }
     }
   </script>
