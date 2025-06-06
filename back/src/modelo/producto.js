@@ -16,7 +16,13 @@ const Producto = conexion.define('producto', {
   },
   imagen: {
     type: DataTypes.STRING
-  }
+  },
+  activo: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true
+  },
+}, {
+  timestamps: false  
 });
 
 module.exports = Producto;

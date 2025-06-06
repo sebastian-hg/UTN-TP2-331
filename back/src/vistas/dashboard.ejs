@@ -74,6 +74,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
+      position: relative;
     }
 
     .card img {
@@ -119,6 +120,63 @@
       background-color: #e74c3c;
       color: white;
     }
+
+    .acciones button.activar {
+      background-color: #27ae60;
+    }
+
+    .card.inactivo {
+      opacity: 0.5;
+      filter: grayscale(1);
+    }
+
+    .inactivo-label {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #e74c3c;
+      color: white;
+      padding: 0.2rem 0.5rem;
+      font-size: 0.8rem;
+      border-radius: 5px;
+    }
+
+    #modalEliminar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    #modalEliminar .modal-content {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      width: 300px;
+    }
+
+    #modalEliminar button {
+      margin: 0.5rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #modalEliminar .confirmar {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    #modalEliminar .cancelar {
+      background-color: #7f8c8d;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -137,7 +195,10 @@
     <section class="productos">
       <% if (productos && productos.length > 0) { %>
         <% productos.forEach(producto => { %>
-          <div class="card">
+          <div class="card <%= !producto.activo ? 'inactivo' : '' %>" id="producto-<%= producto.id %>">
+            <% if (!producto.activo) { %>
+              <div class="inactivo-label">Producto inactivo</div>
+            <% } %>
             <% if (producto.imagen) { %>
               <img src="/uploads/<%= producto.imagen %>" alt="Imagen del producto" />
             <% } else { %>
@@ -148,9 +209,11 @@
             <p class="precio">$<%= producto.precio %></p>
             <div class="acciones">
               <a href="/productos/editar/<%= producto.id %>">Editar</a>
-              <form action="/productos/eliminar/<%= producto.id %>" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?');">
-                <button type="submit">Eliminar</button>
-              </form>
+              <% if (producto.activo) { %>
+                <button onclick="mostrarModal('<%= producto.id %>')">Eliminar</button>
+              <% } else { %>
+                <button class="activar" onclick="activarProducto('<%= producto.id %>')">Activar</button>
+              <% } %>
             </div>
           </div>
         <% }) %>
@@ -159,5 +222,97 @@
       <% } %>
     </section>
   </main>
+
+  <div id="modalEliminar">
+    <div class="modal-content">
+      <p>¿Estás seguro que deseas eliminar este producto?</p>
+      <button class="confirmar" onclick="confirmarEliminar()">Sí, eliminar</button>
+      <button class="cancelar" onclick="cerrarModal()">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    let idAEliminar = null;
+
+    function mostrarModal(id) {
+      idAEliminar = id;
+      document.getElementById("modalEliminar").style.display = "flex";
+    }
+
+    function cerrarModal() {
+      idAEliminar = null;
+      document.getElementById("modalEliminar").style.display = "none";
+    }
+
+    async function confirmarEliminar() {
+      if (!idAEliminar) return;
+
+      try {
+        const res = await fetch(`/productos/estado/${idAEliminar}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ activo: false })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const card = document.getElementById(`producto-${idAEliminar}`);
+          card.classList.add('inactivo');
+          card.querySelector('.acciones').innerHTML = `
+            <a href="/productos/editar/${idAEliminar}">Editar</a>
+            <button class="activar" onclick="activarProducto('${idAEliminar}')">Activar</button>
+          `;
+
+          const label = document.createElement('div');
+          label.className = 'inactivo-label';
+          label.textContent = 'Producto inactivo';
+          card.appendChild(label);
+        } else {
+          alert(data?.error || "No se pudo actualizar el estado del producto.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error de red al intentar eliminar.");
+      } finally {
+        cerrarModal();
+      }
+    }
+
+    async function activarProducto(id) {
+      try {
+        const res = await fetch(`/productos/estado/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ activo: true })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          const card = document.getElementById(`producto-${id}`);
+          card.classList.remove('inactivo');
+
+          const accionesDiv = card.querySelector('.acciones');
+          accionesDiv.innerHTML = `
+            <a href="/productos/editar/${id}">Editar</a>
+            <button onclick="mostrarModal('${id}')">Eliminar</button>
+          `;
+
+          const label = card.querySelector('.inactivo-label');
+          if (label) label.remove();
+        } else {
+          alert(data?.error || "No se pudo activar el producto.");
+        }
+      } catch (error) {
+        console.error(error);
+        alert("Error de red al intentar activar.");
+      }
+    }
+  </script>
 </body>
 </html>

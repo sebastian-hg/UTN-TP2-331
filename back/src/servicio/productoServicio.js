@@ -30,11 +30,12 @@ const modificarProducto = async (id, { nombre, categoria, precio, imagen }) => {
   return producto;
 };
 
-const eliminarProducto = async (id) => {
-  const producto = await Producto.findByPk(id);
-  if (!producto) throw new Error('Producto no encontrado');
-  await producto.destroy();
-  return { mensaje: 'Producto eliminado correctamente' };
+const cambiarEstadoProducto = async (id, activo) => {
+  const [actualizados] = await Producto.update(
+    { activo },
+    { where: { id } }
+  );
+  return actualizados > 0;
 };
 
 const obtenerProductosPorCategoriaConTallas = async (categoria) => {
@@ -55,7 +56,7 @@ module.exports = {
   obtenerPorId,
   crearProducto,
   modificarProducto,
-  eliminarProducto,
+  cambiarEstadoProducto,
   obtenerProductosPorCategoriaConTallas
 };
 

@@ -9,9 +9,9 @@ router.get('/', productoController.obtenerTodos);
 router.get('/categoria/:categoria', productoController.buscarPorCategoria);
 
 // Rutas protegidas (requieren token) TODO: probar con Postman
-router.get('/:id', verificarToken, productoController.obtenerPorId);
-router.post('/', verificarToken, productoController.crearProducto);
-router.put('/:id', verificarToken, productoController.modificarProducto);
-router.delete('/:id', verificarToken, productoController.eliminarProducto);
+router.get('/:id', productoController.obtenerPorId);
+router.post('/', productoController.crearProducto);
+router.put('/:id', productoController.modificarProducto);
+router.post('/estado/:id', productoController.cambiarEstadoProducto);
 
 module.exports = router;

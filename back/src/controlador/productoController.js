@@ -48,13 +48,22 @@ const modificarProducto = async (req, res) => {
 };
 
 // Eliminar producto
-const eliminarProducto = async (req, res) => {
+const cambiarEstadoProducto = async (req, res) => {
+  const { id } = req.params;
+  const { activo } = req.body; // se espera que venga true o false
+
   try {
-    const eliminado = await productoServicio.eliminarProducto(req.params.id);
-    if (!eliminado) return res.status(404).json({ error: 'Producto no encontrado' });
-    res.json({ mensaje: 'Producto eliminado correctamente' });
+    const actualizado = await productoServicio.cambiarEstadoProducto(id, activo);
+
+    if (!actualizado) {
+      return res.status(404).json({ error: 'Producto no encontrado' });
+    }
+
+    const estado = activo ? 'activado' : 'desactivado';
+    res.json({ mensaje: `Producto ${estado} correctamente` });
   } catch (error) {
-    res.status(500).json({ error: 'Error al eliminar producto' });
+    console.error('Error al cambiar estado del producto:', error);
+    res.status(500).json({ error: 'Error al actualizar estado del producto' });
   }
 };
 
@@ -74,7 +83,7 @@ module.exports = {
   obtenerPorId,
   crearProducto,
   modificarProducto,
-  eliminarProducto,
+  cambiarEstadoProducto,
   buscarPorCategoria,
   obtenerTodosDashboard
 };
