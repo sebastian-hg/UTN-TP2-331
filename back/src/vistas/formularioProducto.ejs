@@ -3,66 +3,137 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>
-    <%= producto ? 'Editar Producto' : 'Nuevo Producto' %>
-  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    p {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    label input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        padding: 15px;
+      }
+
+      button {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <h1>
-    <%= producto ? 'Editar Producto' : 'Nuevo Producto' %>
-  </h1>
-
   <form action="<%= producto ? `/productos/${producto.id}` : '/productos' %>" method="POST">
+    <h1><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></h1>
+
     <% if (producto) { %>
       <input type="hidden" name="id" value="<%= producto.id %>" />
-      <% } %>
+    <% } %>
 
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required value="<%= producto ? producto.nombre : '' %>" />
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" name="nombre" required value="<%= producto ? producto.nombre : '' %>" />
 
-        <label for="categoria">Categoría:</label>
-        <select id="categoria" name="categoria" required onchange="mostrarTallas(this.value)">
-          <option value="">Seleccione categoría</option>
-          <option value="ropa" <%=producto?.categoria==='ropa' ? 'selected' : '' %>>Ropa</option>
-          <option value="zapato" <%=producto?.categoria==='zapato' ? 'selected' : '' %>>Zapato</option>
-        </select>
+    <label for="categoria">Categoría:</label>
+    <select id="categoria" name="categoria" required onchange="mostrarTallas(this.value)">
+      <option value="">Seleccione categoría</option>
+      <option value="ropa" <%= producto?.categoria === 'ropa' ? 'selected' : '' %>>Ropa</option>
+      <option value="zapato" <%= producto?.categoria === 'zapato' ? 'selected' : '' %>>Zapato</option>
+    </select>
 
-        <label for="precio">Precio:</label>
-        <input type="number" id="precio" name="precio" step="0.01" required
-          value="<%= producto ? producto.precio : '' %>" />
+    <label for="precio">Precio:</label>
+    <input type="number" id="precio" name="precio" step="0.01" required value="<%= producto ? producto.precio : '' %>" />
 
-        <% const tallasRopa=['S', 'M' , 'L' , 'XL' ]; %>
-          <% const tallasZapato=['38', '40' , '42' , '44' ]; %>
-            <% const tallasSeleccionadas=producto?.tallas?.map(t=> t.valor) || []; %>
+    <% const tallasRopa=['S', 'M', 'L', 'XL']; %>
+    <% const tallasZapato=['38', '40', '42', '44']; %>
+    <% const tallasSeleccionadas = producto?.tallas?.map(t => t.valor) || []; %>
 
-              <div id="tallas-ropa" style="<%= producto?.categoria === 'ropa' ? '' : 'display:none;' %>">
-                <p>Tallas (Ropa):</p>
-                <% tallasRopa.forEach(talla=> { %>
-                  <label>
-                    <input type="checkbox" name="tallas" value="<%= talla %>" <%=tallasSeleccionadas.includes(talla)
-                      ? 'checked' : '' %>
-                    />
-                    <%= talla %>
-                  </label>
-                  <% }) %>
-              </div>
+    <div id="tallas-ropa" style="<%= producto?.categoria === 'ropa' ? '' : 'display:none;' %>">
+      <p>Tallas (Ropa):</p>
+      <% tallasRopa.forEach(talla => { %>
+        <label>
+          <input type="checkbox" name="tallas" value="<%= talla %>" <%= tallasSeleccionadas.includes(talla) ? 'checked' : '' %> />
+          <%= talla %>
+        </label>
+      <% }) %>
+    </div>
 
-              <div id="tallas-zapato" style="<%= producto?.categoria === 'zapato' ? '' : 'display:none;' %>">
-                <p>Tallas (Zapato):</p>
-                <% tallasZapato.forEach(talla=> { %>
-                  <label>
-                    <input type="checkbox" name="tallas" value="<%= talla %>" <%=tallasSeleccionadas.includes(talla)
-                      ? 'checked' : '' %>
-                    />
-                    <%= talla %>
-                  </label>
-                  <% }) %>
-              </div>
+    <div id="tallas-zapato" style="<%= producto?.categoria === 'zapato' ? '' : 'display:none;' %>">
+      <p>Tallas (Zapato):</p>
+      <% tallasZapato.forEach(talla => { %>
+        <label>
+          <input type="checkbox" name="tallas" value="<%= talla %>" <%= tallasSeleccionadas.includes(talla) ? 'checked' : '' %> />
+          <%= talla %>
+        </label>
+      <% }) %>
+    </div>
 
-              <button type="submit">
-                <%= producto ? 'Actualizar' : 'Crear' %>
-              </button>
+    <button type="submit"><%= producto ? 'Actualizar' : 'Crear' %></button>
   </form>
 
   <script>
