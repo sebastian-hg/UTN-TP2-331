@@ -13,7 +13,7 @@ const obtenerTodos = async (req, res) => {
 };
 
 const obtenerTodosDashboard = async () => {
-  return await Producto.findAll();
+  return await productoServicio.obtenerTodos();
 };
 
 // Obtener producto por ID

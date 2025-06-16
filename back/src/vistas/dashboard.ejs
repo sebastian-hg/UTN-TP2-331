@@ -200,42 +200,43 @@
   <main class="contenido">
     <h1>Listado de Productos</h1>
     <section class="productos">
-      <% if (productos && productos.length> 0) { %>
-        <% productos.forEach(producto=> { %>
+      <% if (productos && productos.length > 0) { %>
+        <% productos.forEach(producto => { %>
           <div class="card <%= !producto.activo ? 'inactivo' : '' %>" id="producto-<%= producto.id %>">
             <% if (!producto.activo) { %>
               <div class="inactivo-label">Producto inactivo</div>
-              <% } %>
-
-                <% if (producto.imagen) { %>
-                  <img src="/uploads/<%= producto.imagen %>" alt="Imagen del producto" />
-                  <% } else { %>
-                    <img src="https://via.placeholder.com/250x150?text=Sin+imagen" alt="Sin imagen" />
-                    <% } %>
-
-                      <h3>
-                        <%= producto.nombre %>
-                      </h3>
-                      <p><strong>Categoría:</strong>
-                        <%= producto.categoria %>
-                      </p>
-                      <p class="precio">$<%= producto.precio %>
-                      </p>
-
-                      <div class="acciones">
-                        <a href="/productos/editar/<%= producto.id %>">Editar</a>
-                        <button onclick="abrirModalImagen('<%= producto.id %>')">Actualizar Foto</button>
-                        <% if (producto.activo) { %>
-                          <button onclick="mostrarModal('<%= producto.id %>', true)">Eliminar</button>
-                          <% } else { %>
-                            <button class="activar" onclick="mostrarModal('<%= producto.id %>', false)">Activar</button>
-                            <% } %>
-                      </div>
-          </div>
-          <% }) %>
+            <% } %>
+    
+            <% if (producto.imagen) { %>
+              <img src="/uploads/<%= producto.imagen %>" alt="Imagen del producto" />
             <% } else { %>
-              <p>No hay productos disponibles.</p>
+              <img src="https://via.placeholder.com/250x150?text=Sin+imagen" alt="Sin imagen" />
+            <% } %>
+    
+            <h3><%= producto.nombre %></h3>
+            <p><strong>Categoría:</strong> <%= producto.categoria %></p>
+            <p class="precio">$<%= producto.precio %></p>
+    
+            <% if (producto.tallas && producto.tallas.length > 0) { %>
+              <p><strong>Talles disponibles:</strong> <%= producto.tallas.map(t => t.valor).join(", ") %></p>
+            <% } else { %>
+              <p><strong>Talles disponibles:</strong> Ninguno</p>
+            <% } %>
+    
+            <div class="acciones">
+              <a href="/productos/editar/<%= producto.id %>">Editar</a>
+              <button onclick="abrirModalImagen('<%= producto.id %>')">Actualizar Foto</button>
+              <% if (producto.activo) { %>
+                <button onclick="mostrarModal('<%= producto.id %>', true)">Eliminar</button>
+              <% } else { %>
+                <button class="activar" onclick="mostrarModal('<%= producto.id %>', false)">Activar</button>
               <% } %>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>No hay productos disponibles.</p>
+      <% } %>
     </section>
   </main>
 

@@ -73,6 +73,4 @@ router.post("/", productoController.crearProducto);
 router.post("/:id", productoController.modificarProducto);
 router.post("/estado/:id", productoController.cambiarEstadoProducto);
 
-router.post("/", upload.single("imagen"), productoController.crearProducto);
-
 module.exports = router;
