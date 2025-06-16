@@ -57,6 +57,7 @@ const crearProducto = async (req, res) => {
 // Modificar producto con imagen
 const modificarProducto = async (req, res) => {
   try {
+    console.log("entro modificar ")
     const { nombre, categoria, precio } = req.body;
     let tallas = req.body.tallas || [];
 

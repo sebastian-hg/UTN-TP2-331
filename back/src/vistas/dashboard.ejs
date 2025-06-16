@@ -65,6 +65,7 @@
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
       gap: 1.5rem;
       margin-top: 2rem;
+
     }
 
     .card {
@@ -101,7 +102,8 @@
       margin-top: auto;
       display: flex;
       gap: 0.5rem;
-      justify-content: space-between;
+      justify-content: center;
+      text-align: center;
     }
 
     .acciones a,
@@ -205,11 +207,13 @@
             <% if (!producto.activo) { %>
               <div class="inactivo-label">Producto inactivo</div>
               <% } %>
+
                 <% if (producto.imagen) { %>
                   <img src="/uploads/<%= producto.imagen %>" alt="Imagen del producto" />
                   <% } else { %>
                     <img src="https://via.placeholder.com/250x150?text=Sin+imagen" alt="Sin imagen" />
                     <% } %>
+
                       <h3>
                         <%= producto.nombre %>
                       </h3>
@@ -218,8 +222,10 @@
                       </p>
                       <p class="precio">$<%= producto.precio %>
                       </p>
+
                       <div class="acciones">
                         <a href="/productos/editar/<%= producto.id %>">Editar</a>
+                        <button onclick="abrirModalImagen('<%= producto.id %>')">Actualizar Foto</button>
                         <% if (producto.activo) { %>
                           <button onclick="mostrarModal('<%= producto.id %>', true)">Eliminar</button>
                           <% } else { %>
@@ -233,6 +239,68 @@
               <% } %>
     </section>
   </main>
+
+  <!-- Modal para actualizar imagen -->
+
+  <div id="modalImagen" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000;">
+    <div style="background: white; padding: 1.5rem; border-radius: 10px; width: 300px;">
+      <h3>Actualizar Imagen</h3>
+      <form id="formImagen" enctype="multipart/form-data" action="/productos/actualizar-foto" method="POST">
+        <input type="file" name="imagen" accept="image/*" required />
+        <input type="hidden" name="productoId" id="productoIdInput" />
+        <div style="margin-top: 1rem;">
+          <button type="submit">Subir</button>
+          <button type="button" onclick="cerrarModalImagen()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function abrirModalImagen(id) {
+      document.getElementById('productoIdInput').value = id;
+      document.getElementById('modalImagen').style.display = 'flex';
+    }
+
+    function cerrarModalImagen() {
+      document.getElementById('formImagen').reset();
+      document.getElementById('modalImagen').style.display = 'none';
+    }
+
+    document.getElementById('formImagen').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      console.log('Subiendo imagen...');
+
+      const formData = new FormData(this);
+
+      try {
+        const res = await fetch('/productos/actualizar-foto', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          return alert(data.error || 'Error al subir imagen');
+        }
+
+        const { productoId, filename } = data;
+
+        // Actualizar imagen en pantalla
+        const img = document.querySelector(`#producto-${productoId} img`);
+        img.src = `/uploads/${filename}?t=${Date.now()}`;
+
+        cerrarModalImagen();
+      } catch (err) {
+        console.error(err);
+        alert('Error inesperado al subir imagen');
+      }
+    });
+  </script>
+
 
   <!-- Modal compartido para eliminar/activar -->
   <div id="modalEliminar">
@@ -314,7 +382,7 @@
         cerrarModal();
       }
     }
-  </script>
-</body>
+  </s >
+</body >
 
-</html>
+</html >

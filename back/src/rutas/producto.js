@@ -5,12 +5,42 @@ const productoController = require("../controlador/productoController");
 const { verificarToken } = require("../servicio/authServicio");
 const upload = require("../servicio/uploadServicio");
 const productoServicio = require("../servicio/productoServicio");
+const { Producto } = require("../modelo");
 
 // Rutas públicas
 router.get("/todos", productoController.obtenerTodos);
 router.get("/categoria/:categoria", productoController.buscarPorCategoria);
 
-// Rutas para creación y edición (rutas específicas primero)
+router.post("/actualizar-foto", upload.single("imagen"), async (req, res) => {
+  console.log("ID del producto para actualizar foto:", req.body ?? []);
+  const productoId = req.body.productoId;
+  console.log("ID del producto:", productoId);
+
+  if (!req.file) {
+    return res.status(400).json({ error: "No se subió ninguna imagen" });
+  }
+
+  try {
+    const producto = await Producto.findByPk(productoId);
+    if (!producto) {
+      return res.status(404).json({ error: "Producto no encontrado" });
+    }
+
+    producto.imagen = req.file.filename;
+    await producto.save();
+
+    return res.json({
+      mensaje: "Imagen actualizada correctamente",
+      productoId,
+      filename: req.file.filename,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Error al actualizar imagen" });
+  }
+});
+
+// Rutas para crear y modificar productos
 router.get("/nuevo", (req, res) => {
   res.render("formularioProducto", { producto: null });
 });
@@ -44,7 +74,5 @@ router.post("/:id", productoController.modificarProducto);
 router.post("/estado/:id", productoController.cambiarEstadoProducto);
 
 router.post("/", upload.single("imagen"), productoController.crearProducto);
-router.post('/:id/subir-imagen', upload.single('imagen'), productoController.subirImagen);
-
 
 module.exports = router;
