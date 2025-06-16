@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></title>
+</head>
+<body>
+  <h1><%= producto ? 'Editar Producto' : 'Nuevo Producto' %></h1>
+
+  <form 
+    action="<%= producto ? `/productos/${producto.id}` : '/productos' %>" 
+    method="POST"
+  >
+    <label for="nombre">Nombre:</label>
+    <input 
+      type="text" 
+      id="nombre" 
+      name="nombre" 
+      required 
+      value="<%= producto ? producto.nombre : '' %>" 
+    />
+
+    <label for="categoria">Categoría:</label>
+    <select 
+      id="categoria" 
+      name="categoria" 
+      required 
+      onchange="mostrarTallas(this.value)"
+    >
+      <option value="">Seleccione categoría</option>
+      <option value="ropa" <%= producto && producto.categoria === 'ropa' ? 'selected' : '' %>>Ropa</option>
+      <option value="zapato" <%= producto && producto.categoria === 'zapato' ? 'selected' : '' %>>Zapato</option>
+    </select>
+
+    <label for="precio">Precio:</label>
+    <input 
+      type="number" 
+      id="precio" 
+      name="precio" 
+      step="0.01" 
+      required 
+      value="<%= producto ? producto.precio : '' %>" 
+    />
+
+    <% const tallasRopa = ['S', 'M', 'L', 'XL']; %>
+    <% const tallasZapato = ['38', '40', '42', '44']; %>
+    <% const tallasSeleccionadas = producto && producto.tallas ? producto.tallas.map(t => t.nombre) : []; %>
+
+    <div id="tallas-ropa" style="<%= producto && producto.categoria === 'ropa' ? '' : 'display:none;' %>">
+      <p>Tallas (Ropa):</p>
+      <% tallasRopa.forEach(talla => { %>
+        <label>
+          <input 
+            type="checkbox" 
+            name="tallas" 
+            value="<%= talla %>" 
+            <%= tallasSeleccionadas.includes(talla) ? 'checked' : '' %>
+          />
+          <%= talla %>
+        </label>
+      <% }) %>
+    </div>
+
+    <div id="tallas-zapato" style="<%= producto && producto.categoria === 'zapato' ? '' : 'display:none;' %>">
+      <p>Tallas (Zapato):</p>
+      <% tallasZapato.forEach(talla => { %>
+        <label>
+          <input 
+            type="checkbox" 
+            name="tallas" 
+            value="<%= talla %>" 
+            <%= tallasSeleccionadas.includes(talla) ? 'checked' : '' %>
+          />
+          <%= talla %>
+        </label>
+      <% }) %>
+    </div>
+
+    <button type="submit"><%= producto ? 'Actualizar' : 'Crear' %></button>
+  </form>
+
+  <script>
+    function mostrarTallas(categoria) {
+      document.getElementById('tallas-ropa').style.display = categoria === 'ropa' ? 'block' : 'none';
+      document.getElementById('tallas-zapato').style.display = categoria === 'zapato' ? 'block' : 'none';
+    }
+
+    window.onload = () => {
+      const categoria = document.getElementById('categoria').value;
+      mostrarTallas(categoria);
+    };
+  </script>
+</body>
+</html>

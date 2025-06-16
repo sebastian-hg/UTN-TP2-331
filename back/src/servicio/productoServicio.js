@@ -19,14 +19,34 @@ const obtenerPorId = async (id) => {
   return producto;
 };
 
-const crearProducto = async ({ nombre, categoria, precio, imagen }) => {
-  return await Producto.create({ nombre, categoria, precio, imagen });
-};
+// const modificarProducto = async (id, { nombre, categoria, precio, imagen, tallas = [] }) => {
+//   const producto = await Producto.findByPk(id);
+//   if (!producto) throw new Error('Producto no encontrado');
 
-const modificarProducto = async (id, { nombre, categoria, precio, imagen }) => {
+//   await producto.update({ nombre, categoria, precio, imagen });
+
+//   if (tallas.length > 0) {
+//     const tallasBD = await Talla.findAll({
+//       where: { nombre: tallas }
+//     });
+
+//     await producto.setTallas(tallasBD); // reemplaza las tallas actuales
+//   }
+
+//   return producto;
+// };
+
+const modificarProducto = async (id, { nombre, categoria, precio, imagen, tallas = [] }) => {
   const producto = await Producto.findByPk(id);
   if (!producto) throw new Error('Producto no encontrado');
+
   await producto.update({ nombre, categoria, precio, imagen });
+
+  if (tallas.length > 0) {
+    const tallasBD = await Talla.findAll({ where: { nombre: tallas } });
+    await producto.setTallas(tallasBD); // Reemplaza las tallas anteriores
+  }
+
   return producto;
 };
 
@@ -50,6 +70,18 @@ const obtenerProductosPorCategoriaConTallas = async (categoria) => {
     ]
   });
 };
+
+const crearProducto = async ({ nombre, categoria, precio, tallas, imagen }) => {
+  const producto = await Producto.create({ nombre, categoria, precio, imagen });
+
+  if (tallas && tallas.length > 0) {
+    const tallasDB = await Talla.findAll({ where: { valor: tallas } });
+    await producto.setTallas(tallasDB);
+  }
+
+  return producto;
+};
+
 
 module.exports = {
   obtenerTodos,
