@@ -4,6 +4,7 @@ const router = express.Router();
 const productoController = require("../controlador/productoController");
 const { verificarToken } = require("../servicio/authServicio");
 const upload = require("../servicio/uploadServicio");
+const productoServicio = require("../servicio/productoServicio");
 
 // Rutas públicas
 router.get("/todos", productoController.obtenerTodos);
@@ -16,11 +17,22 @@ router.get("/nuevo", (req, res) => {
 
 router.get("/editar/:id", async (req, res) => {
   const { id } = req.params;
-  const producto = await productoController.obtenerPorId(id);
-  if (!producto) {
-    return res.status(404).send("Producto no encontrado");
+
+  console.log("ID del producto a editar:", id);
+
+  try {
+    const producto = await productoServicio.obtenerPorId(id);
+    console.log("Producto encontrado:", producto);
+
+    if (!producto) {
+      return res.status(404).send("Producto no encontrado");
+    }
+
+    res.render("formularioProducto", { producto });
+  } catch (error) {
+    console.error("Error al obtener el producto:", error);
+    res.status(500).send("Error interno del servidor");
   }
-  res.render("formularioProducto", { producto });
 });
 
 // Rutas con parámetro dinámico más general al final
@@ -28,7 +40,7 @@ router.get("/:id", productoController.obtenerPorId);
 
 // Rutas protegidas (POST, PUT, etc)
 router.post("/", productoController.crearProducto);
-router.put("/:id", productoController.modificarProducto);
+router.post("/:id", productoController.modificarProducto);
 router.post("/estado/:id", productoController.cambiarEstadoProducto);
 
 router.post("/", upload.single("imagen"), productoController.crearProducto);
