@@ -24,6 +24,12 @@ const cargarDatosIniciales = async () => {
 
     // 2. Crear productos
     const productos = await Producto.bulkCreate([
+      { nombre: "Buzo Polar", categoria: "ropa", precio: 11500, imagen: "buzoPolar.jpeg"},
+      { nombre: "Pantalon de Montaña", categoria: "ropa", precio: 8500, imagen: "pantalonMontaña.jpeg" },
+      { nombre: "Chaqueta Rompe Viento", categoria: "ropa", precio: 7000, imagen: "rompeViento.jpeg" },
+      { nombre: "Camisa Messi", categoria: "ropa", precio: 2800, imagen: "camisaMessi.jpeg" },
+      { nombre: "Buzo Adidas", categoria: "ropa", precio: 3200, imagen: "buzoAdidas.jpeg" },
+      { nombre: "Camisaco", categoria: "ropa", precio: 2200, imagen: "camisaco.jpeg" },
       { nombre: "Camiseta Basica", categoria: "ropa", precio: 1500, imagen: "casmisaBlanca.jpeg"},
       { nombre: "Jeans Ajustados", categoria: "ropa", precio: 3500, imagen: "jeansAjustados.jpeg" },
       { nombre: "Chaqueta de Cuero", categoria: "ropa", precio: 7000, imagen: "chaquetaCuero.jpeg" },
@@ -38,6 +44,12 @@ const cargarDatosIniciales = async () => {
       { nombre: "Zapatillas Casual", categoria: "calzado", precio: 3800, imagen: "zapatillasCasual.jpeg" },
       { nombre: "Mocasines", categoria: "calzado", precio: 5200, imagen: "mocasines.jpeg" },
       { nombre: "Chanclas Playa", categoria: "calzado", precio: 1200, imagen: "chanclasPlaya.jpeg" },
+      { nombre: "Zapatos Fila", categoria: "calzado", precio: 8000, imagen: "zapatosFila.jpeg" },
+      { nombre: "Calzado de montaña", categoria: "calzado", precio: 33500, imagen: "calzadoMontaña.jpeg" },
+      { nombre: "Botas Industriales", categoria: "calzado", precio: 36000, imagen: "botasIndustriales.jpeg" },
+      { nombre: "Zapatillas Futbol", categoria: "calzado", precio: 23800, imagen: "zapatillasFutbol.jpeg" },
+      { nombre: "Vans", categoria: "calzado", precio: 15200, imagen: "vans.jpeg" },
+      { nombre: "Crocs", categoria: "calzado", precio: 6200, imagen: "crocs.jpeg" },
     ]);
 
     // 3. Asociar tallas según categoría
