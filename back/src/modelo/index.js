@@ -2,29 +2,29 @@ const Usuario = require('./usuario');
 const Producto = require('./producto');
 const Talla = require('./talla');
 const Venta = require('./venta');
-const DetalleVenta = require('./detalleVenta');
+const VentaProducto = require('./ventaProducto'); // ⚠️ este nombre debe coincidir con tu servicio
 
-// Relacion Producto/Talla (Muchos a Muchos)
+
+// Relación Producto/Talla (Muchos a Muchos)
 Producto.belongsToMany(Talla, {
-  through: 'producto_talla', 
-  as: 'tallas',         
-  foreignKey: 'productoId'
+  through: 'producto_talla',
+  as: 'tallas',
+  foreignKey: 'productoId',
 });
-
 Talla.belongsToMany(Producto, {
   through: 'producto_talla',
-  as: 'productos',             
-  foreignKey: 'tallaId'
+  as: 'productos',
+  foreignKey: 'tallaId',
 });
 
-// relacion Usuario/Venta (Uno a Muchos)
+// Relación Producto/Venta (Muchos a Muchos) a través de DetalleVenta
 Producto.belongsToMany(Venta, {
-  through: DetalleVenta,
+  through: VentaProducto,
   as: 'ventas',
   foreignKey: 'productoId',
 });
 Venta.belongsToMany(Producto, {
-  through: DetalleVenta,
+  through: VentaProducto,
   as: 'productos',
   foreignKey: 'ventaId',
 });
@@ -34,5 +34,6 @@ module.exports = {
   Producto,
   Talla,
   Venta,
-  DetalleVenta,
+  VentaProducto // ✅ este nombre es clave
+
 };

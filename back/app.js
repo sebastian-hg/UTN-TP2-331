@@ -8,6 +8,7 @@ const authRuta = require("./src/rutas/auth");
 const productoRoutes = require("./src/rutas/producto");
 const dashboardRoutes = require("./src/rutas/dashboard");
 const uploadRoutes = require("./src/rutas/uploadRuta");
+const ventaRuta = require('./src/rutas/ventaRuta');
 const app = express();
 
 app.use(cors()); // Para permitir todas las solicitudes cross-origin
@@ -32,6 +33,7 @@ app.use('/upload', uploadRoutes);
 
 app.use("/productos", productoRoutes);
 app.use("/auth", authRuta);
+app.use('/api', ventaRuta);
 app.use("/", dashboardRoutes); // Rutas protegidas y dashboard
 
 
@@ -50,7 +52,7 @@ const conexion = require("./src/config/database");
 const { cargarDatosIniciales } = require("./script");
 
 conexion
-  .sync({ force: true })
+  .sync({ alter: true })
   .then(async () => {
     console.log("Tablas sincronizadas");
     await cargarDatosIniciales();
