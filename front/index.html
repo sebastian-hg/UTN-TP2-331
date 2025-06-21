@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Bienvenida</title>
@@ -8,19 +9,44 @@
       font-family: Arial, sans-serif;
       background: #f0f0f0;
       display: flex;
-      height: 100vh;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       margin: 0;
+      height: 100vh;
     }
+
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+    }
+
+    .admin-btn button {
+      background-color: #333;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .admin-btn button:hover {
+      background-color: #555;
+    }
+
     .contenedor {
       background: white;
       padding: 2rem 3rem;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       text-align: center;
       width: 320px;
+      margin-top: auto;
+      margin-bottom: auto;
     }
+
     input[type="text"] {
       width: 100%;
       padding: 0.8rem;
@@ -30,6 +56,7 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
+
     button {
       margin-top: 1.5rem;
       padding: 0.8rem 1.5rem;
@@ -41,19 +68,42 @@
       cursor: pointer;
       width: 100%;
     }
+
     button:disabled {
       background-color: #aaa;
       cursor: not-allowed;
     }
+
+    .header-container {
+      height: 3.1rem;
+      background-color: #333;
+
+      width: 100%;
+    }
   </style>
 </head>
+
 <body>
+  <header class="header-container">
+    <img src="icons/alta.jpg" alt="Logo Alta" style="height: 50px;">
+    <h1 style="color: white; margin-left: 1rem;">Tienda Alta</h1>
+  </header>
+
+  <!-- Botón de administración -->
+  <div class="admin-btn">
+    <button onclick="location.href='http://localhost:3000/auth/login'">Ir al Panel de Administración</button>
+  </div>
+
+
+  <!-- Contenido principal -->
   <div class="contenedor">
     <h2>Bienvenido a la Tienda</h2>
     <p>Por favor, ingresa tu nombre para continuar</p>
     <input type="text" id="nombre" placeholder="Tu nombre..." autofocus />
     <button id="btnIngresar" disabled>Ingresar</button>
   </div>
+
+  <footer style="background-color: #2c3e50;">  Alta Pinta © derechos reservados 2025</footer>
 
   <script>
     const inputNombre = document.getElementById('nombre');
@@ -72,5 +122,7 @@
       }
     });
   </script>
+
 </body>
+
 </html>
