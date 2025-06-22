@@ -34,6 +34,5 @@ module.exports = {
   Producto,
   Talla,
   Venta,
-  VentaProducto // ✅ este nombre es clave
-
+  VentaProducto
 };

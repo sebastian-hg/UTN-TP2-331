@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ticket de Compra</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      margin: 2rem;
+    }
+    h1 {
+      color: #27ae60;
+    }
+    .ticket {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .productos-lista {
+      margin-top: 1rem;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+    .producto-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .producto-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+    }
+    .producto-info {
+      flex: 1;
+    }
+    .volver {
+      display: inline-block;
+      margin-top: 2rem;
+      text-decoration: none;
+      color: #2980b9;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket">
+    <h1>Ticket de Compra</h1>
+    <div id="infoCompra"></div>
+
+    <h2>Productos comprados</h2>
+    <div class="productos-lista" id="productosLista"></div>
+
+    <a href="tienda.html" class="volver">← Volver a la Tienda</a>
+  </div>
+
+  <script>
+    const venta = JSON.parse(localStorage.getItem('ticketVenta'));
+    const productos = JSON.parse(localStorage.getItem('ticketProductos'));
+
+    const infoDiv = document.getElementById('infoCompra');
+    const productosDiv = document.getElementById('productosLista');
+
+    if (!venta || !productos) {
+      infoDiv.innerHTML = "<p>No se encontró información de la compra.</p>";
+    } else {
+      infoDiv.innerHTML = `
+        <p><strong>ID Compra:</strong> ${venta.id}</p>
+        <p><strong>Cliente:</strong> ${venta.nombreUsuario}</p>
+        <p><strong>Fecha:</strong> ${new Date(venta.fecha).toLocaleString()}</p>
+        <p><strong>Cantidad total de productos:</strong> ${venta.cantidad_productos}</p>
+        <p><strong>Total pagado:</strong> $${venta.precio_total.toFixed(2)}</p>
+      `;
+
+      productos.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'producto-item';
+        div.innerHTML = `
+          <img src="http://localhost:3000/uploads/${p.imagen}" alt="${p.nombre}">
+          <div class="producto-info">
+            <strong>${p.nombre}</strong><br>
+            Talla: ${p.tallas[0]}<br>
+            Cantidad: ${p.cantidad}<br>
+            Precio unitario: $${p.precio.toFixed(2)}<br>
+            Subtotal: $${(p.precio * p.cantidad).toFixed(2)}
+          </div>
+        `;
+        productosDiv.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <title>Tienda</title>
+  <title>Tienda con Carrito Persistente</title>
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100%;
@@ -22,6 +24,7 @@
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      box-sizing: border-box;
     }
 
     .sidebar h3 {
@@ -51,6 +54,7 @@
       padding: 2rem;
       height: 100%;
       overflow-y: auto;
+      box-sizing: border-box;
     }
 
     .encabezado {
@@ -71,6 +75,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
+      box-sizing: border-box;
     }
 
     .producto img {
@@ -146,6 +151,35 @@
       padding: 0.5rem 1rem;
       font-size: 0.95rem;
       cursor: pointer;
+      margin-bottom: 1rem;
+    }
+
+    /* Modal estilos */
+    #modalCarrito {
+      display: none;
+      /* oculto por defecto */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #modalCarrito .modal-contenido {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
     }
 
     .item-carrito {
@@ -171,32 +205,37 @@
     .item-controles button {
       padding: 0.3rem 0.6rem;
       font-size: 1rem;
+      margin-left: 0.3rem;
+      cursor: pointer;
     }
 
-    .oculto {
-      display: none;
+    #carritoResumen {
+      font-weight: bold;
+      text-align: right;
+      margin-top: 1rem;
     }
 
     .boton-compra {
       background-color: #27ae60;
       color: white;
-      padding: 0.5rem 1rem;
+      padding: 0.7rem 1.2rem;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      margin-top: 1rem;
+      align-self: flex-end;
+      font-size: 1rem;
     }
 
-    header {
-      background: #2c3e50;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      color: white;
-    }
-
-    header img {
-      height: 50px;
-      margin-right: 1rem;
+    .cerrar-modal {
+      background: #ccc;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      align-self: flex-start;
+      margin-bottom: 1rem;
+      font-size: 1rem;
     }
   </style>
 </head>
@@ -206,7 +245,7 @@
   <div class="sidebar">
     <h3>Menú</h3>
     <button onclick="volverInicio()">Volver al inicio</button>
-    <button id="btnCarrito" onclick="verCarrito()">🛒 Ver carrito</button>
+    <button id="btnCarrito" onclick="abrirModalCarrito()">🛒 Ver carrito</button>
     <h3>Categorías</h3>
     <button onclick="activarOpcion(this); cargarProductos()">Todos</button>
     <button onclick="activarOpcion(this); cargarPorCategoria('calzado')">Calzado</button>
@@ -214,25 +253,24 @@
   </div>
 
   <div class="contenido">
-    <div id="vistaProductos">
-      <div class="encabezado">
-        <span id="saludo"></span>
-      </div>
-      <div id="productos" class="grid-productos"></div>
-      <div class="paginacion">
-        <button onclick="anteriorPagina()">Anterior</button>
-        <button onclick="siguientePagina()">Siguiente</button>
-      </div>
+    <div class="encabezado">
+      <span id="saludo"></span>
     </div>
+    <div id="productos" class="grid-productos"></div>
+    <div class="paginacion">
+      <button onclick="anteriorPagina()">Anterior</button>
+      <button onclick="siguientePagina()">Siguiente</button>
+    </div>
+  </div>
 
-    <div id="vistaCarrito" class="oculto">
-      <h2>Carrito de compras</h2>
+  <!-- Modal Carrito -->
+  <div id="modalCarrito">
+    <div class="modal-contenido">
+      <button class="cerrar-modal" onclick="cerrarModalCarrito()">Cerrar ✖</button>
+      <h2>Carrito de Compras</h2>
       <div id="carritoItems"></div>
-      <div id="carritoResumen" style="margin-top: 1rem; font-weight: bold;"></div>
-      <div style="margin-top: 1rem;">
-        <button onclick="mostrarProductos()">Volver a productos</button>
-        <button class="boton-compra" onclick="comprarCarrito()">Comprar</button>
-      </div>
+      <div id="carritoResumen"></div>
+      <button class="boton-compra" onclick="comprarCarrito()">Comprar</button>
     </div>
   </div>
 
@@ -240,12 +278,20 @@
     let productosData = [];
     let pagina = 0;
     const porPagina = 5;
-    const carrito = [];
+
+    // Cargo carrito desde localStorage o vacio
+    const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
     document.addEventListener("DOMContentLoaded", () => {
       const nombre = localStorage.getItem("nombreCliente");
       if (!nombre) window.location.href = "index.html";
       document.getElementById("saludo").textContent = `Hola, ${nombre}!`;
+
+      // Mostrar boton carrito si hay items
+      if (carrito.length > 0) {
+        document.getElementById("btnCarrito").style.display = "block";
+      }
+
       cargarProductos();
     });
 
@@ -258,14 +304,14 @@
       const res = await fetch("http://localhost:3000/productos/todos");
       productosData = await res.json();
       pagina = 0;
-      mostrarProductos();
+      renderizarProductos();
     }
 
     async function cargarPorCategoria(cat) {
       const res = await fetch(`http://localhost:3000/productos/categoria/${cat}`);
       productosData = await res.json();
       pagina = 0;
-      mostrarProductos();
+      renderizarProductos();
     }
 
     function renderizarProductos() {
@@ -306,6 +352,10 @@
       });
     }
 
+    function guardarCarrito() {
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+    }
+
     function agregarAlCarrito(id, nombre, precio, imagen) {
       const radio = document.querySelector(`input[name="talla-${id}"]:checked`);
       if (!radio) return alert("Seleccioná una talla");
@@ -318,16 +368,25 @@
         carrito.push({ id, nombre, precio, imagen, tallas: [talla], cantidad: 1 });
       }
 
+      guardarCarrito();
+
       radio.checked = false;
       document.getElementById("btnCarrito").style.display = "block";
     }
 
-    function verCarrito() {
-      document.getElementById("vistaProductos").classList.add("oculto");
-      document.getElementById("vistaCarrito").classList.remove("oculto");
+    function abrirModalCarrito() {
+      document.getElementById("modalCarrito").style.display = "flex";
+      renderizarCarrito();
+    }
 
+    function cerrarModalCarrito() {
+      document.getElementById("modalCarrito").style.display = "none";
+    }
+
+    function renderizarCarrito() {
       const cont = document.getElementById("carritoItems");
       cont.innerHTML = "";
+
       let totalCantidad = 0;
       let totalPrecio = 0;
 
@@ -336,7 +395,7 @@
         div.className = "item-carrito";
 
         div.innerHTML = `
-          <img src="http://localhost:3000/uploads/${p.imagen}">
+          <img src="http://localhost:3000/uploads/${p.imagen}" alt="${p.nombre}">
           <div class="item-info">
             <strong>${p.nombre}</strong><br>
             Talla: ${p.tallas[0]}<br>
@@ -349,6 +408,7 @@
             <button onclick="eliminar(${i})">🗑</button>
           </div>
         `;
+
         cont.appendChild(div);
 
         totalCantidad += p.cantidad;
@@ -361,15 +421,10 @@
       `;
     }
 
-    function mostrarProductos() {
-      document.getElementById("vistaProductos").classList.remove("oculto");
-      document.getElementById("vistaCarrito").classList.add("oculto");
-      renderizarProductos();
-    }
-
     function sumar(i) {
       carrito[i].cantidad++;
-      verCarrito();
+      guardarCarrito();
+      renderizarCarrito();
     }
 
     function restar(i) {
@@ -377,17 +432,23 @@
         carrito[i].cantidad--;
       } else {
         carrito.splice(i, 1);
+        if (carrito.length === 0) {
+          document.getElementById("btnCarrito").style.display = "none";
+          cerrarModalCarrito();
+        }
       }
-      verCarrito();
+      guardarCarrito();
+      renderizarCarrito();
     }
 
     function eliminar(i) {
       carrito.splice(i, 1);
-      verCarrito();
       if (carrito.length === 0) {
         document.getElementById("btnCarrito").style.display = "none";
-        mostrarProductos();
+        cerrarModalCarrito();
       }
+      guardarCarrito();
+      renderizarCarrito();
     }
 
     function siguientePagina() {
@@ -409,12 +470,60 @@
       window.location.href = "index.html";
     }
 
-    function comprarCarrito() {
-      alert("Compra realizada con éxito. ¡Gracias!");
-      carrito.length = 0;
-      document.getElementById("btnCarrito").style.display = "none";
-      mostrarProductos();
-    }
+async function comprarCarrito() {
+  if (carrito.length === 0) {
+    alert("El carrito está vacío.");
+    return;
+  }
+
+  const nombreUsuario = localStorage.getItem("nombreCliente") || "invitado";
+
+  const precioTotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+
+  const productosParaEnviar = carrito.map(p => ({
+    productoId: p.id,
+    cantidad: p.cantidad,
+    talla: p.tallas[0]
+  }));
+
+  try {
+    const res = await fetch('http://localhost:3000/api/ventas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nombreUsuario,
+        precioTotal,
+        productos: productosParaEnviar
+      })
+    });
+
+    if (!res.ok) throw new Error("Error en la compra");
+
+    const data = await res.json();
+
+    // Guardar en localStorage el resumen de la venta (solo objeto venta)
+    localStorage.setItem("ticketVenta", JSON.stringify(data.venta));
+
+    // Guardar también el detalle de productos comprado (carrito actual)
+    localStorage.setItem("ticketProductos", JSON.stringify(carrito));
+
+    alert("Compra realizada con éxito. ¡Gracias!");
+
+    // Vaciar carrito y actualizar UI
+    carrito.length = 0;
+    guardarCarrito();
+    cerrarModalCarrito();
+    document.getElementById("btnCarrito").style.display = "none";
+    renderizarProductos();
+
+    // Redirigir a la página de ticket con el id de la venta
+    window.location.href = `ticket.html?id=${data.venta.id}`;
+
+  } catch (error) {
+    alert("No se pudo completar la compra: " + error.message);
+  }
+}
   </script>
 </body>
+
 </html>
