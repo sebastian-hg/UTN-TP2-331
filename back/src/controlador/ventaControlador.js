@@ -32,7 +32,6 @@ const ventaPorId = async (req, res) => {
 // Controlador para imprimir factura
 const imprimirFactura = async (req, res) => {
   try {
-    // Ejemplo: recibir id por params
     const { id } = req.params;
 
     if (!id) {

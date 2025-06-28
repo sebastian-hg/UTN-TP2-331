@@ -69,7 +69,7 @@ const protegerRutaAPI = (req, res, next) => {
 
 // Middleware para proteger rutas web (token en cookie)
 const protegerRutaWeb = (req, res, next) => {
-  const token = req.cookies.token; // Necesitas cookie-parser para esto
+  const token = req.cookies.token; 
   if (!token) return res.redirect('/auth/login');
 
   try {

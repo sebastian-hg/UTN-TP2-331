@@ -2,7 +2,7 @@ const Usuario = require('./usuario');
 const Producto = require('./producto');
 const Talla = require('./talla');
 const Venta = require('./venta');
-const VentaProducto = require('./ventaProducto'); // ⚠️ este nombre debe coincidir con tu servicio
+const VentaProducto = require('./ventaProducto'); 
 
 
 // Relación Producto/Talla (Muchos a Muchos)

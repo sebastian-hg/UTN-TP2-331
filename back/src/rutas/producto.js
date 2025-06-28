@@ -68,7 +68,6 @@ router.get("/editar/:id", async (req, res) => {
 // Rutas con parámetro dinámico más general al final
 router.get("/:id", productoController.obtenerPorId);
 
-// Rutas protegidas (POST, PUT, etc)
 router.post("/", productoController.crearProducto);
 router.post("/:id", productoController.modificarProducto);
 router.post("/estado/:id", productoController.cambiarEstadoProducto);

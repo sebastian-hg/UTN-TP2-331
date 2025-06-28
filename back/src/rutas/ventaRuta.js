@@ -4,7 +4,7 @@ const ventaControlador = require('../controlador/ventaControlador');
 
 router.post('/ventas', ventaControlador.registrarVenta);
 router.get('/ventas/:id', ventaControlador.ventaPorId);
-router.get('/imprimir/:id', ventaControlador.imprimirFactura); // ruta GET para imprimir factura por id
+router.post('/imprimir/:id', ventaControlador.imprimirFactura); 
 
 
 module.exports = router;

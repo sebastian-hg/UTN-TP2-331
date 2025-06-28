@@ -46,7 +46,6 @@ const crearProducto = async (req, res) => {
 
     await productoServicio.crearProducto(nuevoProducto);
 
-    // ✅ Ya no renderizamos formulario. Redirigimos al dashboard:
     res.redirect("/dashboard");
   } catch (error) {
     console.error("Error al crear producto:", error);
@@ -54,10 +53,8 @@ const crearProducto = async (req, res) => {
   }
 };
 
-// Modificar producto con imagen
 const modificarProducto = async (req, res) => {
   try {
-    console.log("entro modificar ")
     const { nombre, categoria, precio } = req.body;
     let tallas = req.body.tallas || [];
 
@@ -78,10 +75,9 @@ const modificarProducto = async (req, res) => {
     if (!productoActualizado)
       return res.status(404).json({ error: "Producto no encontrado" });
 
-    // Redirige al dashboard o página deseada
     res.redirect("/dashboard");
   } catch (error) {
-    console.error("❌ Error al modificar producto:", error);
+    console.error(" Error al modificar producto:", error);
     res.status(500).json({ error: "Error al modificar producto" });
   }
 };
@@ -103,7 +99,7 @@ const cambiarEstadoProducto = async (req, res) => {
     const estado = activo ? "activado" : "desactivado";
     res.json({ mensaje: `Producto ${estado} correctamente` });
   } catch (error) {
-    console.error("❌ Error al cambiar estado del producto:", error);
+    console.error(" Error al cambiar estado del producto:", error);
     res.status(500).json({ error: "Error al actualizar estado del producto" });
   }
 };
@@ -137,7 +133,7 @@ const subirImagen = async (req, res) => {
     if (!productoActualizado)
       return res.status(404).send("Producto no encontrado");
 
-    res.redirect(`/productos/${id}`); // O renderizar donde quieras después de subir la imagen
+    res.redirect(`/productos/${id}`); 
   } catch (error) {
     console.error(error);
     res.status(500).send("Error al subir imagen");

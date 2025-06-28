@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const conexion = require('../config/database'); // Asegúrate que la ruta es correcta y exporta la conexión Sequelize
+const conexion = require('../config/database'); 
 
 const Venta = conexion.define('venta', {
   nombreUsuario: {
