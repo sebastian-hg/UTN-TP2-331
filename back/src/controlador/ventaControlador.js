@@ -1,4 +1,4 @@
-const { crearVenta, obtenerVentaPorId } = require('../servicio/ventaServicio');
+const { crearVenta, obtenerVentaPorId, imprimirFacturaPorId } = require('../servicio/ventaServicio');
 
 const registrarVenta = async (req, res) => {
   try {
@@ -12,6 +12,7 @@ const registrarVenta = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 const ventaPorId = async (req, res) => {
   try {
     const id = req.params.id;
@@ -28,7 +29,32 @@ const ventaPorId = async (req, res) => {
   }
 };
 
+// Controlador para imprimir factura
+const imprimirFactura = async (req, res) => {
+  try {
+    // Ejemplo: recibir id por params
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ mensaje: "Falta el id de la venta" });
+    }
+
+    const pdfBuffer = await imprimirFacturaPorId(id);
+
+    res.set({
+      "Content-Type": "application/pdf",
+      "Content-Disposition": `attachment; filename=factura_${id}.pdf`,
+    });
+
+    res.status(200).send(pdfBuffer);
+  } catch (error) {
+    console.error("Error en controlador imprimirFactura:", error);
+    res.status(500).json({ mensaje: "Error generando factura PDF", error: error.message });
+  }
+};
+
 module.exports = {
   registrarVenta,
-  ventaPorId
+  ventaPorId,
+  imprimirFactura
 };
