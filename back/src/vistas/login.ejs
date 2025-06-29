@@ -100,12 +100,18 @@
         font-size: 1.5rem;
       }
     }
+
+    .volver-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <div style="position: fixed; top: 20px; left: 20px;">
-<button onclick="window.location.href = 'http://127.0.0.1:5500/front/index.html'">← Volver a Inicio</button>
+  <div class="volver-btn">
+    <button onclick="window.location.href = 'http://127.0.0.1:5500/front/index.html'">← Volver a Inicio</button>
   </div>
 
   <div class="login-container">
@@ -115,7 +121,7 @@
       <p class="error-message"><%= error %></p>
     <% } %>
 
-    <form method="POST" action="/auth/login">
+    <form method="POST" action="/auth/login" id="loginForm">
       <label for="email">Email:</label>
       <input id="email" type="email" name="email" required autocomplete="username" />
 
@@ -123,8 +129,19 @@
       <input id="password" type="password" name="password" required autocomplete="current-password" />
 
       <button type="submit">Iniciar sesión</button>
+
+      <button type="button" onclick="autocompletar()" style="background: #bbb; margin-top: 10px;">
+        Autocompletar credenciales
+      </button>
     </form>
   </div>
+
+  <script>
+    function autocompletar() {
+      document.getElementById('email').value = "utn@gmail.com";
+      document.getElementById('password').value = "utn123";
+    }
+  </script>
 
 </body>
 </html>
