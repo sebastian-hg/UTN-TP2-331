@@ -1,0 +1,42 @@
+version: '2.4'  
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    ports:
+      - "5100:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda
+      MYSQL_USER: tienda_user
+      MYSQL_PASSWORD: 1234
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  node_app:
+    build:
+      context: ../back
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../back:/app
+    working_dir: /app
+    command: ["node", "app.js"]
+    environment:
+      DB_HOST: mysql
+      DB_USER: tienda_user
+      DB_PASSWORD: 1234
+      DB_NAME: tienda
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql_data:
