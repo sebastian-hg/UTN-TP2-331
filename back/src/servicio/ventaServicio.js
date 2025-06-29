@@ -1,7 +1,6 @@
 const { Venta, Producto, VentaProducto } = require('../modelo');
 const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 
-// Función para crear venta (igual que antes)
 const crearVenta = async ({ nombreUsuario, productos }) => {
   let precioTotal = 0;
   let cantidadTotal = 0;
@@ -52,10 +51,9 @@ const obtenerVentaPorId = async (id) => {
   });
 };
 
-// Nueva función generadora de PDF con pdf-lib
 const generarFacturaPDF = async (venta) => {
   const pdfDoc = await PDFDocument.create();
-  let page = pdfDoc.addPage([595, 842]); // Tamaño A4 en puntos (72dpi)
+  let page = pdfDoc.addPage([595, 842]); 
 
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontSize = 12;
