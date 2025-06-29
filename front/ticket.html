@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <title>Ticket de Compra</title>
@@ -9,28 +10,35 @@
       background-color: #f0f2f5;
       margin: 2rem;
     }
+
     h1 {
       color: #27ae60;
+      margin-top: 0;
+      margin-bottom: 1rem;
     }
+
     .ticket {
       background: white;
       padding: 1.5rem;
       border-radius: 10px;
       max-width: 600px;
       margin: auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+
     .productos-lista {
       margin-top: 1rem;
       border-top: 1px solid #ccc;
       padding-top: 1rem;
     }
+
     .producto-item {
       display: flex;
       align-items: center;
       gap: 1rem;
       margin-bottom: 1rem;
     }
+
     .producto-item img {
       width: 80px;
       height: 80px;
@@ -38,18 +46,54 @@
       background-color: #f0f0f0;
       border-radius: 6px;
     }
+
     .producto-info {
       flex: 1;
     }
-    .volver {
-      display: inline-block;
-      margin-top: 2rem;
-      text-decoration: none;
-      color: #2980b9;
-      font-weight: bold;
+
+    .boton-container {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    #btnImprimir {
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #btnImprimir:hover {
+      background-color: #219150;
+      box-shadow: 0 6px 12px rgba(33, 145, 80, 0.6);
+    }
+
+    #btnFinalizar {
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      box-shadow: 0 4px 8px rgba(231, 76, 60, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #btnFinalizar:hover {
+      background-color: #c0392b;
+      box-shadow: 0 6px 12px rgba(192, 57, 43, 0.6);
     }
   </style>
 </head>
+
 <body>
   <div class="ticket">
     <h1>Ticket de Compra</h1>
@@ -58,7 +102,10 @@
     <h2>Productos comprados</h2>
     <div class="productos-lista" id="productosLista"></div>
 
-    <a href="tienda.html" class="volver">← Volver a la Tienda</a>
+    <div class="boton-container">
+      <button id="btnImprimir">Imprimir Factura</button>
+      <button id="btnFinalizar">Finalizar Compra</button>
+    </div>
   </div>
 
   <script>
@@ -95,6 +142,47 @@
         productosDiv.appendChild(div);
       });
     }
+
+    //Imprimir Factura
+    document.getElementById('btnImprimir').addEventListener('click', async () => {
+      if (!venta || !venta.id) {
+        alert("No hay ID de compra para imprimir la factura.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/imprimir/${venta.id}`, {
+          method: 'POST',
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.mensaje || 'Error al generar PDF');
+        }
+
+        const blob = await response.blob();
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `factura_${venta.id}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+      } catch (error) {
+        alert('No se pudo generar la factura: ' + error.message);
+      }
+    });
+
+    //Finalizar Compra
+    document.getElementById('btnFinalizar').addEventListener('click', () => {
+      localStorage.removeItem('ticketVenta');
+      localStorage.removeItem('ticketProductos');
+      window.location.href = 'index.html';
+    });
   </script>
 </body>
+
 </html>

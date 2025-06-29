@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Bienvenida</title>
+  <link rel="icon" type="image/jpeg" href="icons/logo.jpeg" />
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -15,25 +16,58 @@
       height: 100vh;
     }
 
+    .header-container {
+      height: 60px;
+      background-color: #333;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      position: relative;
+      box-sizing: border-box;
+      gap: 20px;
+    }
+
+    .header-container img {
+      height: 40px;
+      flex-shrink: 0;
+    }
+
+    .header-container h1 {
+      color: white;
+      margin: 0 auto;
+      font-size: 1.7rem;
+      font-weight: 700;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
     .admin-btn {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      z-index: 1000;
+      margin-left: auto;
+      padding-bottom: 1rem;;
     }
 
     .admin-btn button {
-      background-color: #333;
+      background-color: #27ae60;
       color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
+      padding: 8px 18px;
+      border-radius: 8px;
       border: none;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 1rem;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(39, 174, 96, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      align-items: center;
+      height: 38px;
     }
 
     .admin-btn button:hover {
-      background-color: #555;
+      background-color: #1e8449;
+      box-shadow: 0 6px 12px rgba(30, 132, 73, 0.6);
     }
 
     .contenedor {
@@ -74,28 +108,28 @@
       cursor: not-allowed;
     }
 
-    .header-container {
-      height: 3.1rem;
-      background-color: #333;
-
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      background-color: #2c3e50;
+      color: white;
+      font-size: 0.9rem;
+      position: fixed;
+      bottom: 0;
       width: 100%;
     }
   </style>
 </head>
 
-<body>
+<body style="background-color: #fbc2c0;">
   <header class="header-container">
-    <img src="icons/alta.jpg" alt="Logo Alta" style="height: 50px;">
-    <h1 style="color: white; margin-left: 1rem;">Tienda Alta</h1>
+    <img src="icons/logo.jpeg" alt="Logo Alta" />
+    <h1>Tienda Alta Pinta</h1>
+    <div class="admin-btn">
+      <button onclick="location.href='http://localhost:3000/auth/login'">Ir al Panel de Administración</button>
+    </div>
   </header>
 
-  <!-- Botón de administración -->
-  <div class="admin-btn">
-    <button onclick="location.href='http://localhost:3000/auth/login'">Ir al Panel de Administración</button>
-  </div>
-
-
-  <!-- Contenido principal -->
   <div class="contenedor">
     <h2>Bienvenido a la Tienda</h2>
     <p>Por favor, ingresa tu nombre para continuar</p>
@@ -103,13 +137,12 @@
     <button id="btnIngresar" disabled>Ingresar</button>
   </div>
 
-  <footer style="background-color: #2c3e50;">  Alta Pinta © derechos reservados 2025</footer>
+  <footer>Alta Pinta © derechos reservados 2025</footer>
 
   <script>
     const inputNombre = document.getElementById('nombre');
     const btnIngresar = document.getElementById('btnIngresar');
 
-    // Activar botón solo si hay texto
     inputNombre.addEventListener('input', () => {
       btnIngresar.disabled = inputNombre.value.trim() === '';
     });
@@ -117,12 +150,11 @@
     btnIngresar.addEventListener('click', () => {
       const nombre = inputNombre.value.trim();
       if (nombre) {
-        localStorage.setItem('nombreCliente', nombre); // Reemplaza o crea
+        localStorage.setItem('nombreCliente', nombre);
         window.location.href = 'tienda.html';
       }
     });
   </script>
-
 </body>
 
 </html>

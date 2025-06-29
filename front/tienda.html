@@ -52,10 +52,12 @@
     .contenido {
       margin-left: 220px;
       padding: 2rem;
-      height: 100%;
       overflow-y: auto;
       box-sizing: border-box;
+      min-height: 100vh;
+      background-color: #fbc2c0;
     }
+
 
     .encabezado {
       margin-bottom: 2rem;
@@ -154,10 +156,8 @@
       margin-bottom: 1rem;
     }
 
-    /* Modal estilos */
     #modalCarrito {
       display: none;
-      /* oculto por defecto */
       position: fixed;
       top: 0;
       left: 0;
@@ -263,7 +263,7 @@
     </div>
   </div>
 
-  <!-- Modal Carrito -->
+  <!-- Modal  -->
   <div id="modalCarrito">
     <div class="modal-contenido">
       <button class="cerrar-modal" onclick="cerrarModalCarrito()">Cerrar ✖</button>
@@ -318,7 +318,8 @@
       const contenedor = document.getElementById("productos");
       contenedor.innerHTML = "";
       const inicio = pagina * porPagina;
-      const productosPagina = productosData.slice(inicio, inicio + porPagina);
+      const activos = productosData.filter(p => p.activo);
+      const productosPagina = activos.slice(inicio, inicio + porPagina);
 
       productosPagina.forEach(p => {
         const div = document.createElement("div");
@@ -470,59 +471,57 @@
       window.location.href = "index.html";
     }
 
-async function comprarCarrito() {
-  if (carrito.length === 0) {
-    alert("El carrito está vacío.");
-    return;
-  }
+    async function comprarCarrito() {
+      if (carrito.length === 0) {
+        alert("El carrito está vacío.");
+        return;
+      }
 
-  const nombreUsuario = localStorage.getItem("nombreCliente") || "invitado";
+      const nombreUsuario = localStorage.getItem("nombreCliente") || "invitado";
 
-  const precioTotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
+      const precioTotal = carrito.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
 
-  const productosParaEnviar = carrito.map(p => ({
-    productoId: p.id,
-    cantidad: p.cantidad,
-    talla: p.tallas[0]
-  }));
+      const productosParaEnviar = carrito.map(p => ({
+        productoId: p.id,
+        cantidad: p.cantidad,
+        talla: p.tallas[0]
+      }));
 
-  try {
-    const res = await fetch('http://localhost:3000/api/ventas', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombreUsuario,
-        precioTotal,
-        productos: productosParaEnviar
-      })
-    });
+      try {
+        const res = await fetch('http://localhost:3000/api/ventas', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nombreUsuario,
+            precioTotal,
+            productos: productosParaEnviar
+          })
+        });
 
-    if (!res.ok) throw new Error("Error en la compra");
+        if (!res.ok) throw new Error("Error en la compra");
 
-    const data = await res.json();
+        const data = await res.json();
 
-    // Guardar en localStorage el resumen de la venta (solo objeto venta)
-    localStorage.setItem("ticketVenta", JSON.stringify(data.venta));
+        // Guardar en localStorage el resumen de la venta
+        localStorage.setItem("ticketVenta", JSON.stringify(data.venta));
 
-    // Guardar también el detalle de productos comprado (carrito actual)
-    localStorage.setItem("ticketProductos", JSON.stringify(carrito));
+        // Guardar también el detalle de productos comprado 
+        localStorage.setItem("ticketProductos", JSON.stringify(carrito));
 
-    alert("Compra realizada con éxito. ¡Gracias!");
+        alert("Compra realizada con éxito. ¡Gracias!");
 
-    // Vaciar carrito y actualizar UI
-    carrito.length = 0;
-    guardarCarrito();
-    cerrarModalCarrito();
-    document.getElementById("btnCarrito").style.display = "none";
-    renderizarProductos();
+        carrito.length = 0;
+        guardarCarrito();
+        cerrarModalCarrito();
+        document.getElementById("btnCarrito").style.display = "none";
+        renderizarProductos();
 
-    // Redirigir a la página de ticket con el id de la venta
-    window.location.href = `ticket.html?id=${data.venta.id}`;
+        window.location.href = `ticket.html?id=${data.venta.id}`;
 
-  } catch (error) {
-    alert("No se pudo completar la compra: " + error.message);
-  }
-}
+      } catch (error) {
+        alert("No se pudo completar la compra: " + error.message);
+      }
+    }
   </script>
 </body>
 
