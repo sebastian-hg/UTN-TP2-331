@@ -1,7 +1,7 @@
-const puppeteer = require('puppeteer');
 const { Venta, Producto, VentaProducto } = require('../modelo');
+const { PDFDocument, StandardFonts, rgb } = require('pdf-lib');
 
-// Función que ya tenés para crear venta
+// Función para crear venta (igual que antes)
 const crearVenta = async ({ nombreUsuario, productos }) => {
   let precioTotal = 0;
   let cantidadTotal = 0;
@@ -52,61 +52,52 @@ const obtenerVentaPorId = async (id) => {
   });
 };
 
-// ✅ Generador de HTML dinámico para el PDF
+// Nueva función generadora de PDF con pdf-lib
 const generarFacturaPDF = async (venta) => {
-  try {
-    const productosHTML = venta.productos.map(p => `
-      <div style="margin-bottom: 10px; padding: 10px; border-bottom: 1px solid #ccc;">
-        <strong>${p.nombre}</strong><br/>
-        Talla: ${p.ventaProducto.talla} - Cantidad: ${p.ventaProducto.cantidad}<br/>
-        Precio Unitario: $${parseFloat(p.ventaProducto.precioUnitario).toFixed(2)}<br/>
-        Subtotal: $${(p.ventaProducto.cantidad * parseFloat(p.ventaProducto.precioUnitario)).toFixed(2)}
-      </div>
-    `).join('');
+  const pdfDoc = await PDFDocument.create();
+  let page = pdfDoc.addPage([595, 842]); // Tamaño A4 en puntos (72dpi)
 
-    const html = `
-      <!DOCTYPE html>
-      <html lang="es">
-      <head>
-        <meta charset="UTF-8">
-        <title>Factura #${venta.id}</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          h1 { color: #27ae60; }
-        </style>
-      </head>
-      <body>
-        <h1>Factura de Compra</h1>
-        <p><strong>ID de Compra:</strong> ${venta.id}</p>
-        <p><strong>Cliente:</strong> ${venta.nombreUsuario}</p>
-        <p><strong>Fecha:</strong> ${new Date(venta.fecha).toLocaleString()}</p>
-        <p><strong>Total productos:</strong> ${venta.cantidad_productos}</p>
-        <p><strong>Total pagado:</strong> $${parseFloat(venta.precio_total).toFixed(2)}</p>
-        <hr/>
-        <h2>Detalle de Productos</h2>
-        ${productosHTML}
-      </body>
-      </html>
-    `;
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontSize = 12;
+  let y = 800;
 
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+  const drawText = (text, x, yPos) => {
+    page.drawText(text, { x, y: yPos, size: fontSize, font, color: rgb(0, 0, 0) });
+  };
 
-    await page.setContent(html, { waitUntil: "networkidle0" });
+  drawText(`Factura de Compra`, 50, y);
+  y -= 25;
+  drawText(`ID de Compra: ${venta.id}`, 50, y);
+  y -= 20;
+  drawText(`Cliente: ${venta.nombreUsuario}`, 50, y);
+  y -= 20;
+  drawText(`Fecha: ${new Date(venta.fecha).toLocaleString()}`, 50, y);
+  y -= 20;
+  drawText(`Total productos: ${venta.cantidad_productos}`, 50, y);
+  y -= 20;
+  drawText(`Total pagado: $${parseFloat(venta.precio_total).toFixed(2)}`, 50, y);
+  y -= 30;
+  drawText(`Detalle de Productos:`, 50, y);
+  y -= 20;
 
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-      margin: { top: "20px", right: "20px", bottom: "20px", left: "20px" },
-    });
+  for (const p of venta.productos) {
+    const talla = p.ventaProducto.talla || 'N/A';
+    const cantidad = p.ventaProducto.cantidad;
+    const precioUnitario = parseFloat(p.ventaProducto.precioUnitario).toFixed(2);
+    const subtotal = (cantidad * parseFloat(p.ventaProducto.precioUnitario)).toFixed(2);
 
-    await browser.close();
-    return pdfBuffer;
+    const texto = `${p.nombre} - Talla: ${talla} - Cantidad: ${cantidad} - Precio Unitario: $${precioUnitario} - Subtotal: $${subtotal}`;
+    drawText(texto, 50, y);
+    y -= 20;
 
-  } catch (error) {
-    console.error("Error generando PDF en servicio:", error);
-    throw error;
+    if (y < 50) {
+      page = pdfDoc.addPage([595, 842]);
+      y = 800;
+    }
   }
+
+  const pdfBytes = await pdfDoc.save();
+  return Buffer.from(pdfBytes);
 };
 
 const imprimirFacturaPorId = async (id) => {
