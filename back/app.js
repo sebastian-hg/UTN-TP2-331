@@ -43,8 +43,8 @@ app.get("/", (req, res) => {
 });
 
 // Iniciar servidor
-app.listen(3000, () => {
-  console.log("Servidor corriendo en http://localhost:3000");
+app.listen(3000, '0.0.0.0', () => {
+  console.log('Servidor corriendo en puerto 3000');
 });
 
 // Configuración base de datos y carga inicial
