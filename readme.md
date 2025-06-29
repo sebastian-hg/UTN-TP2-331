@@ -1,46 +1,68 @@
-# Proyecto tienda nube
-Implementación de proyecto back para manejar los registros de una tienda de ropa y calzado
+# 🛍️ Proyecto Tienda Nube ALTA PINTA
 
-### instrucciones para generar un ambiente local y poder usar la app:
+Implementación de un proyecto backend para manejar los registros de una tienda de ropa y calzado. Se utiliza **Node.js**, **MySQL** (a través de Docker), y un frontend simple con HTML + Live Server.
+
+## ✅ Requisitos Previos
+
+Antes de comenzar, asegurate de tener instalados los siguientes componentes:
+
+### 1. Docker (obligatorio)
+
+> Necesario para levantar la base de datos MySQL y el backend en contenedores.
+
+- **Windows:**
+  ```bash
+  winget install --id=Docker.DockerDesktop -e
+
+-  **Mac**
+    brew install --cask docker
+
+luego para validar que se instalo sin problemas usar los siguientes comandos:
+* docker --version
+* docker compose version
+
+### 2. Server Live
+debera descargar el plugin de visual studio code para poder levantar el front 
 
 
-El proyecto esta separado en dos carpetas, por lo cual se recomienda generar dos terminales, asi se tiene separados el back y el front, usted debera:
+### Como levantar la app?
 
-# en la terminal 1 exclusiva para levantar docker:  
+El proyecto esta separado en tres carpetas, docker, back y front
+
+
+# requiere abrir una (1) terminal exclusiva para levantar docker:  
 
 1- ejecutar los siguiente comandos:
 
-- cd back
-- npm install (descarga todas la librerias necesarias)
+1. cd / docker
 
-Se necesita tener docker instalado localmente en caso de no tenerlos, se debera instalar con:
-Windows : winget install --id=Docker.DockerDesktop -e
-mac : brew install --cask docker
+2. docker-compose up --build 
+        este comando levantara en un contenedor la base de datos en MySQL y el backEnd en node, esto permite eliminar cualquier tipo de problema de configuraciones
+        debido a que toda configuracion esta en el contenedor y el desarrollador n ose debe preocupar
 
-1- levantar el contenedor de docker con el comando: 
+* IMPORTANTE Si requiere validar alguna informacion en la base de datos del proyecto en el contenedor, usted debera:
+1. abrir otra terminal
+2. cd docker
+3. docker exec -it mysql_servidor mysql -u tienda_user -p1234
 
-* docker-compose up -d  (esto resuelve cualquier problema de conexiones con la base de datos y configuraciones) levanta la base datos en el puerto 5100,
-se cambia puerto 3306 para evitar cualquier problema que se este usando el puerto 
 
-- datos de interes:
-* si se requiere validar los datos en la base de datos podria entrar al mysql del contenedor con el comando: 
-
-1- docker exec -it mysql_servidor mysql -u tienda_user -p
-
-2- clave: 1234
-
-3- comandos:
+ya estando dentro de la base de datos debera generar los siguientes comandos:
     use tienda (base de datos que se genera)
     show tables (ver todas las tablas que se generaron)
     select * from nombre-table (para visualizar los datos)
 
-### terminal 2 back
- ya una vez levantado el docker localmente y tener todas las dependencias instaladas, usted debe:
- 1. cd back
- 2. node app.js (levanta la app en el puerto 3000) ya se puede ingregar a http://localhost:3000/auth/login para verificar el frotn con los ejs
- 
-### para levantar el Front
-debe navegar el en la raiz del proyecto a /front/index.html 
-una vez posicionado en index.html debe presionar en la parte inferior de la pantalla del lado derecho la opcion GO Live, esto levantara el front en la siguiente direccion: http://127.0.0.1:5500/front/index.html
+
+### Requerimientos Front
+
+1. debera abrir el archivo index.html en el VSC
+2. en la parte inferior derecha de la pantalla del VSC, debe presionar GO LIVE, esto levantara la app en la ruta : http://127.0.0.1:5500/front/index.html
+
+### LOGIN Administrador 
+con las siguientes credenciales usted podra ingresar al portal de admin:
+1. email: "Sebastian@gmail.com", password: "123"
+2. email: "utn@gmail.com", password: "utn123" 
 
 ### postman se agrego en la raiz del proyecto la coleccion de postman para poder probar las diferentes funcionalidades del back 
+
+NOTA: luego de probar la app se recomienda bajar los contenedores con el comando 
+docker-compose down -v  para bajar y eliminar todos los contenedores
