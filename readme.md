@@ -2,6 +2,8 @@
 
 Implementación de un proyecto backend para manejar los registros de una tienda de ropa y calzado. Se utiliza **Node.js**, **MySQL** (a través de Docker), y un frontend simple con HTML + Live Server.
 
+se cuenta con un script.js el cual al momento de levantar inserta datos en la base de datos.
+
 ## ✅ Requisitos Previos
 
 Antes de comenzar, asegurate de tener instalados los siguientes componentes:
