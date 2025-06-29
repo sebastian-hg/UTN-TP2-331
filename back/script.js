@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { Producto, Usuario, Talla } = require("./src/modelo"); // Asegurate de importar desde index.js
+const { Producto, Usuario, Talla } = require("./src/modelo"); 
 
 const cargarDatosIniciales = async () => {
   try {
@@ -67,9 +67,8 @@ const cargarDatosIniciales = async () => {
     // 4. Crear usuarios con contraseña encriptada
     const saltRounds = 10;
     const usuarios = [
-      { email: "S@gmail.com", password: "123" },
-      { email: "ThiagoFernandez", password: "thiago123" },
-      { email: "test", password: "test1234" },
+      { email: "Sebastian@gmail.com", password: "123" },
+      { email: "utn@gmail.com", password: "utn123" },
     ];
 
     for (const user of usuarios) {
