@@ -23,8 +23,10 @@ Necesario para levantar la base de datos MySQL y el backend en contenedores.
   ```
 
 -  **Mac**
-  ```brew install --cask docker
+  ```bash
+  brew install --cask docker
   ```
+
 
 Luego para validar que se instalo sin problemas usar los siguientes comandos:
 * docker --version
