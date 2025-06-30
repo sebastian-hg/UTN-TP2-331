@@ -4,10 +4,10 @@ Implementación de un proyecto backend para manejar los registros de una tienda 
 
 se cuenta con un script.js el cual al momento de levantar inserta datos en la base de datos.
 
-### Cualquier duda o problema contactar a :
-# Sebastian Hernandez
-# 1127620035
-# sebastianhg479@gmail.com
+# Cualquier duda o problema contactar a :
+### Sebastian Hernandez
+### 1127620035
+### sebastianhg479@gmail.com
 
 ## ✅ Requisitos Previos
 
@@ -20,9 +20,11 @@ Necesario para levantar la base de datos MySQL y el backend en contenedores.
 - **Windows:**
   ```bash
   winget install --id=Docker.DockerDesktop -e
+  ```
 
 -  **Mac**
   ```brew install --cask docker
+  ```
 
 Luego para validar que se instalo sin problemas usar los siguientes comandos:
 * docker --version
