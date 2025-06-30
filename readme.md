@@ -41,11 +41,12 @@ Debera descargar el plugin de visual studio code para poder levantar el front
 El proyecto esta separado en tres carpetas, docker, back y front
 
 
-## requiere abrir una (1) terminal exclusiva para levantar docker:  
+## Requiere abrir una (1) terminal exclusiva para levantar docker:  
 
 ejecutar los siguiente comandos en la raiz del proyecto:
 
 1. cd docker && docker-compose up --build
+
     este comando entra al archivo docker y levantara en un contenedor la base de datos en MySQL y el backEnd en node, esto permite eliminar cualquier tipo de problema de configuraciones
     debido a que toda configuracion esta en el contenedor y el desarrollador no se debe preocupar
 
