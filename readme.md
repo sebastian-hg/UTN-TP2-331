@@ -36,12 +36,12 @@ Luego para validar que se instalo sin problemas usar los siguientes comandos:
 Debera descargar el plugin de visual studio code para poder levantar el front 
 
 
-### Como levantar la app?
+# Como levantar la app?
 
 El proyecto esta separado en tres carpetas, docker, back y front
 
 
-# requiere abrir una (1) terminal exclusiva para levantar docker:  
+## requiere abrir una (1) terminal exclusiva para levantar docker:  
 
 ejecutar los siguiente comandos en la raiz del proyecto:
 
@@ -61,12 +61,12 @@ ya estando dentro de la base de datos debera generar los siguientes comandos:
     select * from nombre-table (para visualizar los datos)
 
 
-### Requerimientos Front
+## Requerimientos Front
 
 1. debera abrir el archivo index.html en el VSC
 2. en la parte inferior derecha de la pantalla del VSC, debe presionar GO LIVE, esto levantara la app en la ruta : http://127.0.0.1:5500/front/index.html
 
-### LOGIN Administrador 
+## LOGIN Administrador 
 con las siguientes credenciales usted podra ingresar al portal de admin:
 1. email: "Sebastian@gmail.com", password: "123"
 2. email: "utn@gmail.com", password: "utn123" 
